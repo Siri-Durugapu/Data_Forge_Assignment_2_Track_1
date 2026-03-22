@@ -4,6 +4,9 @@ Video links
 
 Module_A - https://drive.google.com/file/d/1dPDESA7kt90Q3XH8O4LIsKymRxUvmlx7/view?usp=sharing
 
+Module_B - https://drive.google.com/file/d/1wnzjdQEgqOh7exK1wXPtvC-PMqUH9L20/view?usp=drive_link
+
+
 
 ##  Application Development & Database Index Structure Implementation
 
