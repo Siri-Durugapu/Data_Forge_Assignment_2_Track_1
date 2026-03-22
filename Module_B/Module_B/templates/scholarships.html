@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Scholarships</title>
+<style>
+body{font-family:Arial;margin:20px;}
+.card{border:1px solid black;padding:10px;margin:10px;}
+</style>
+</head>
+
+<body>
+
+<h2>Scholarships</h2>
+
+<button onclick="window.location.href='dashboard.html'">Back</button>
+<button onclick="logout()">Logout</button>
+
+<div id="msg" style="color:red;"></div>
+<div id="list"></div>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+    document.getElementById("list").innerHTML = "Loading...";
+    let user = await isAuth();
+
+    let data = await getScholarships();
+
+    let html="";
+    data.forEach(s=>{
+        html+=`
+        <div class="card">
+        <p>ID: ${s.ScholarshipID}</p>
+        <p>Name: ${s.ScholarshipName}</p>
+
+        ${user.role === "Student" 
+            ? <button onclick="apply(${s.ScholarshipID})">Apply</button> 
+            : ""}
+
+        ${user.role === "Authority" 
+            ? <button onclick="removeScholarship(${s.ScholarshipID})">Delete</button> 
+            : ""}
+
+        </div>`;
+    });
+
+    list.innerHTML=html;
+}
+
+async function apply(id){
+    let student_id = prompt("Enter Student ID");
+
+    if (!student_id) {
+        alert("Student ID required");
+        return;
+    }
+
+    let res = await applyScholarship(student_id, id);
+
+    console.log("Apply Response:", res);
+
+    if (!res) {
+        document.getElementById("msg").innerText = "Server not responding";
+        return;
+    }
+
+    if (res.message) {
+        alert(res.message);
+        document.getElementById("msg").innerText = res.message;
+    } else {
+        document.getElementById("msg").innerText =
+            res.detail || res.error || "Something went wrong";
+    }
+}
+
+async function removeScholarship(id){
+    if(!confirm("Delete this scholarship?")) return;
+
+    let res = await deleteScholarship(id);
+
+    if(res?.message){
+        alert(res.message);
+        load();
+    } else {
+        document.getElementById("msg").innerText =res?.error || "Delete failed";
+    }
+}
+
+load();
+</script>
+
+</body>
+</html>

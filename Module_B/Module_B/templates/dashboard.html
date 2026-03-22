@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<style>
+body { font-family: Arial; margin:20px; }
+button { padding:8px; margin:5px; }
+</style>
+</head>
+
+<body>
+
+<h2>Dashboard</h2>
+
+<button onclick="logout()">Logout</button>
+<button onclick="window.location.href='profile.html'">Profile</button>
+
+<hr>
+
+<div id="info"></div>
+
+<hr>
+
+<div id="student" style="display:none;">
+    <h3>Student Panel</h3>
+    <button onclick="window.location.href='scholarships.html'">
+        View Scholarships
+    </button>
+</div>
+
+<div id="admin" style="display:none;">
+    <h3>Admin Panel</h3>
+
+    <button onclick="window.location.href='admin.html'">
+        Verify Applications
+    </button>
+
+    <button onclick="window.location.href='member.html'">
+        Create Member
+    </button>
+</div>
+
+<div id="authority" style="display:none;">
+    <h3>Authority Panel</h3>
+
+    <button onclick="window.location.href='authority.html'">
+        Process Payments
+    </button>
+
+    <button onclick="window.location.href='scholarships.html'">
+        View/Manage Scholarships
+    </button>
+</div>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+    let user = await isAuth();
+    if(!user || !user.role) return;
+
+    document.getElementById("info").innerHTML = `
+        <p><b>Name:</b> ${user.user}</p>
+        <p><b>Role:</b> ${user.role}</p>
+    `;
+
+    if(user.role === "Student") student.style.display="block";
+    if(user.role === "Admin") admin.style.display="block";
+    if(user.role === "Authority") authority.style.display="block";
+}
+
+load();
+</script>
+
+</body>
+</html>

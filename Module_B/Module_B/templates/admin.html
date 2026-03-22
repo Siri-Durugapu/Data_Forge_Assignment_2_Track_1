@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin</title>
+<style>
+body{font-family:Arial;margin:20px;}
+input,button{padding:8px;margin:5px;}
+</style>
+</head>
+
+<body>
+
+<h2>Admin Panel</h2>
+
+<button onclick="window.location.href='dashboard.html'">Back</button>
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<input id="app_id" placeholder="Application ID"><br>
+<select id="status">
+  <option value="Approved">Approved</option>
+  <option value="Rejected">Rejected</option>
+</select><br>
+<input id="remarks" placeholder="Remarks"><br>
+
+<button onclick="verify()">Verify</button>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+    let user = await isAuth();
+    if(user.role !== "Admin"){
+        alert("Access Denied");
+        window.location.href="dashboard.html";
+    }
+}
+
+async function verify(){
+
+    let appId = document.getElementById("app_id").value;
+    let statusVal = document.getElementById("status").value;
+    let remarksVal = document.getElementById("remarks").value;
+
+    if(!appId || !statusVal || !remarksVal){
+        alert("Fill all fields");
+        return;
+    }
+
+    let res = await verifyApplication(appId, statusVal, remarksVal);
+
+    if(res?.message) alert(res.message);
+    else alert(res?.error || "Verification failed");
+}
+
+load();
+</script>
+
+</body>
+</html>

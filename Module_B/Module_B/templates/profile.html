@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Profile</title>
+<style>
+body{font-family:Arial;margin:20px;}
+table{border-collapse:collapse;margin-top:10px;}
+td,th{padding:8px;border:1px solid black;}
+button{padding:6px;margin:2px;}
+</style>
+</head>
+
+<body>
+
+<h2>Profile</h2>
+
+<button onclick="window.location.href='dashboard.html'">Back</button>
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<div id="profile"></div>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+
+    let auth = await isAuth();
+    let data = await getProfile();
+
+    if(!auth || !data || data.error){
+        document.getElementById("profile").innerHTML = "Failed to load profile";
+        return;
+    }
+
+    let html = "";
+
+    if(auth.role === "Student"){
+        html = `
+        <p><b>Name:</b> ${data.Name}</p>
+        <p><b>Email:</b> ${data.Email}</p>
+        <p><b>Phone:</b> ${data.PhoneNo}</p>
+        <p><b>Role:</b> ${data.Role}</p>
+        <p><b>Age:</b> ${data.Age}</p>
+        `;
+    }
+
+    else {
+
+        html = `<table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>`;
+
+        data.forEach(m => {
+            html += `
+            <tr>
+                <td>${m.MemberID}</td>
+                <td>${m.Name}</td>
+                <td>${m.Email}</td>
+                <td>${m.Role}</td>
+                <td>
+                    ${auth.role === "Admin" 
+                        ? `<button onclick="removeMember(${m.MemberID})">Delete</button>` 
+                        : "-"}
+                </td>
+            </tr>`;
+        });
+
+        html += `</table>`;
+    }
+
+    document.getElementById("profile").innerHTML = html;
+}
+
+async function removeMember(id){
+
+    if(!confirm("Are you sure you want to delete this member?")) return;
+
+    let res = await deleteMember(id);
+
+    if(res?.message){
+        alert(res.message);
+        load(); // refresh
+    } else {
+        alert(res?.error || "Delete failed");
+    }
+}
+
+load();
+</script>
+
+</body>
+</html>

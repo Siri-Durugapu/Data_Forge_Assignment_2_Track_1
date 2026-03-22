@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Member</title>
+<style>
+body{font-family:Arial;margin:20px;}
+input,button{padding:8px;margin:5px;}
+</style>
+</head>
+
+<body>
+
+<h2>Create Member</h2>
+
+<button onclick="window.location.href='dashboard.html'">Back</button>
+
+<input id="name" placeholder="Name"><br>
+<input id="email" placeholder="Email"><br>
+<input id="phone" placeholder="Phone"><br>
+<input id="age" placeholder="Age"><br>
+<input id="role" placeholder="Role"><br>
+
+<button onclick="create()">Create</button>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+    let user = await isAuth();
+    if(user.role !== "Admin"){
+        alert("Access Denied");
+        window.location.href="dashboard.html";
+    }
+}
+
+async function create(){
+
+    let nameVal = document.getElementById("name").value;
+    let emailVal = document.getElementById("email").value;
+    let phoneVal = document.getElementById("phone").value;
+    let ageVal = document.getElementById("age").value;
+    let roleVal = document.getElementById("role").value;
+
+    if(!nameVal || !emailVal || !phoneVal || !ageVal || !roleVal){
+        alert("Fill all fields");
+        return;
+    }
+
+    let res = await createMember({
+        name: nameVal,
+        email: emailVal,
+        phone: phoneVal,
+        age: parseInt(ageVal),
+        role: roleVal
+    });
+
+    if(res?.message) alert(res.message);
+    else alert(res?.error || "Something went wrong");
+}
+
+load();
+</script>
+
+</body>
+</html>

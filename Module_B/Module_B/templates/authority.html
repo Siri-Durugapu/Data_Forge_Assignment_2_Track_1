@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Authority</title>
+<style>
+body{font-family:Arial;margin:20px;}
+input,button{padding:8px;margin:5px;}
+</style>
+</head>
+
+<body>
+
+<h2>Authority Panel</h2>
+
+<button onclick="window.location.href='dashboard.html'">Back</button>
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<input id="app_id" placeholder="Application ID"><br>
+<input id="amount" placeholder="Amount"><br>
+<input id="bank" placeholder="Bank ID"><br>
+
+<button onclick="pay()">Pay</button>
+
+<script src="../app/static/api.js"></script>
+
+<script>
+async function load(){
+    let user = await isAuth();
+    if(user.role !== "Authority"){
+        alert("Access Denied");
+        window.location.href="dashboard.html";
+    }
+}
+
+async function pay(){
+    if(!app_id.value || !amount.value || !bank.value){
+        alert("Fill all fields");
+        return;
+    }
+
+    let res = await releasePayment(
+        parseInt(app_id.value),
+        parseFloat(amount.value),
+        parseInt(bank.value)
+    );
+
+    if(res?.message) alert(res.message);
+    else alert(res?.error || "Payment failed");
+}
+
+load();
+</script>
+
+</body>
+</html>
